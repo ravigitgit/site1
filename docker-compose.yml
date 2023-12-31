@@ -1,0 +1,35 @@
+version: '3'
+services:
+    web:
+        image: nginx:latest
+        ports:
+            - "99:80"
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+            - ./public:/site1/public
+        depends_on:
+            - php
+        restart: always
+    php:
+        build:
+              context: .
+              dockerfile: PHP.Dockerfile
+        volumes:
+              - ./public:/site1/public
+        depends_on:
+              - mysql
+        restart: always
+    mysql:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: 'password'
+            MYSQL_USER: 'ravi'
+            MYSQL_PASSWORD: 'password'
+            MYSQL_DATABASE: 'site1'
+        volumes:
+            - site1:/var/lib/mysql
+        ports:
+            - "3307:3306"
+        restart: always
+volumes:
+    site1: {}
